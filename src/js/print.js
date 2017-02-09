@@ -377,10 +377,10 @@ PrintJS.prototype.collectStyles = function (element) {
 
     for (let i = 0; i < style.length; i++) {
       // styles including
-      let targetStyles = ['border', 'float', 'box']
+      let targetStyles = ['border', 'float', 'box',  'break-before', 'break-after', 'break-inside']
 
       // exact
-      let targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height', 'page-break-before', 'page-break-after', 'page-break-inside']
+      let targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height']
 
       // optinal - include margin and padding
       if (this.params.honorMarginPadding) {
