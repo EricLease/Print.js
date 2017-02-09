@@ -375,26 +375,28 @@ PrintJS.prototype.collectStyles = function (element) {
   if (win.getComputedStyle) { // modern browsers
     style = win.getComputedStyle(element, '')
 
+    // styles including
+    let targetStyles = ['border', 'float', 'box',  'break-before', 'break-after', 'break-inside']
+
+    // exact
+    let targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height']
+
+    // optinal - include margin and padding
+    if (this.params.honorMarginPadding) {
+      targetStyle.push('margin', 'padding')
+    }
+
+    // optinal - include color
+    if (this.params.honorColor) {
+      targetStyle.push('color')
+    } 
+
     for (let i = 0; i < style.length; i++) {
-      // styles including
-      let targetStyles = ['border', 'float', 'box',  'break-before', 'break-after', 'break-inside']
-
-      // exact
-      let targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height']
-
-      // optinal - include margin and padding
-      if (this.params.honorMarginPadding) {
-        targetStyle.push('margin', 'padding')
-      }
-
-      // optinal - include color
-      if (this.params.honorColor) {
-        targetStyle.push('color')
-      }
+      let currStyle = style[i];
 
       for (let s = 0; s < targetStyle.length; s++) {
-        if (style[i].indexOf(targetStyles[s]) !== -1 || style[i].indexOf(targetStyle[s]) === 0) {
-          elementStyle += style[i] + ':' + style.getPropertyValue(style[i]) + ';'
+        if (currStyle.indexOf(targetStyles[s]) !== -1 || currStyle.indexOf(targetStyle[s]) === 0) {
+          elementStyle += currStyle + ':' + style.getPropertyValue(currStyle) + ';'
         }
       }
     }
