@@ -1,10 +1,10 @@
 'use strict'
 
-let browser = require('./browser')
+var browser = require('./browser')
 
-let printTypes = ['pdf', 'html', 'image', 'json']
+var printTypes = ['pdf', 'html', 'image', 'json']
 
-let defaultParams = {
+var defaultParams = {
   printable: null,
   type: 'pdf',
   header: null,
@@ -21,7 +21,7 @@ let defaultParams = {
   htmlData: ''
 }
 
-let printFriendlyElement, bodyStyle, headerStyle
+var printFriendlyElement, bodyStyle, headerStyle
 
 module.exports = function () {
   // check if a printable document or object was supplied
@@ -31,7 +31,7 @@ module.exports = function () {
   }
 
   // instantiate print object
-  let printJS = new PrintJS(arguments)
+  var printJS = new PrintJS(arguments)
 
   // print friendly defaults
   printFriendlyElement = 'max-width: ' + printJS.params.maxWidth + 'px !important;' + printJS.params.font_size + ' !important;'
@@ -44,7 +44,7 @@ module.exports = function () {
           // firefox doesn't support iframe printing, we will just open the pdf file instead
       if (browser.isFirefox()) {
         console.log('PrintJS doesn\'t support PDF printing in Firefox.')
-        let win = window.open(printJS.params.printable, '_blank')
+        var win = window.open(printJS.params.printable, '_blank')
         win.focus()
               // make sure there is no loading modal opened
         if (printJS.params.showModal) printJS.disablePrintModal()
@@ -68,10 +68,10 @@ module.exports = function () {
 }
 
 // printJS class
-let PrintJS = function () {
-  let args = arguments[0]
+var PrintJS = function () {
+  var args = arguments[0]
 
-  let print = this
+  var print = this
 
   print.params = extend({}, defaultParams)
 
@@ -108,7 +108,7 @@ let PrintJS = function () {
   }
 
   // to prevent duplication and issues, remove print.printFrame from DOM, if it exists
-  let usedFrame = document.getElementById(print.params.frameId)
+  var usedFrame = document.getElementById(print.params.frameId)
 
   if (usedFrame) {
     usedFrame.parentNode.removeChild(usedFrame)
@@ -143,11 +143,11 @@ PrintJS.prototype.pdf = function () {
   // if showing feedback to user, pre load pdf files (hacky)
   // since we will be using promises, we can't use this feature in IE
   if (print.params.showModal && !browser.isIE()) {
-    let pdfObject = document.createElement('img')
+    var pdfObject = document.createElement('img')
     pdfObject.src = print.params.printable
 
-    let pdf = new Promise(function (resolve, reject) {
-      let loadPDF = setInterval(checkPDFload, 100)
+    var pdf = new Promise(function (resolve, reject) {
+      var loadPDF = setInterval(checkPDFload, 100)
 
       function checkPDFload () {
         if (pdfObject.complete) {
@@ -176,7 +176,7 @@ PrintJS.prototype.pdf = function () {
 
 PrintJS.prototype.image = function () {
   // create the image element
-  let img = document.createElement('img')
+  var img = document.createElement('img')
   img.setAttribute('style', 'width:100%;')
   img.setAttribute('id', 'printableImage')
 
@@ -184,19 +184,19 @@ PrintJS.prototype.image = function () {
   img.src = this.params.printable
 
   // assign `this` to a variable, to be used within the promise, and functions
-  let self = this
+  var self = this
 
   // create wrapper
-  let printableElement = document.createElement('div')
+  var printableElement = document.createElement('div')
   printableElement.setAttribute('style', 'width:100%')
 
   // to prevent firefox from not loading images within iframe, we can use base64-encoded data URL of images pixel data
   if (browser.isFirefox()) {
     // let's make firefox happy
-    let canvas = document.createElement('canvas')
+    var canvas = document.createElement('canvas')
     canvas.setAttribute('width', img.width)
     canvas.setAttribute('height', img.height)
-    let context = canvas.getContext('2d')
+    var context = canvas.getContext('2d')
     context.drawImage(img, 0, 0)
 
     // reset img src attribute with canvas dataURL
@@ -219,7 +219,7 @@ PrintJS.prototype.image = function () {
 
 PrintJS.prototype.html = function () {
   // get HTML printable element
-  let printElement = document.getElementById(this.params.printable)
+  var printElement = document.getElementById(this.params.printable)
 
   // check if element exists
   if (!printElement) {
@@ -229,7 +229,7 @@ PrintJS.prototype.html = function () {
   }
 
   // make a copy of the printElement to prevent DOM changes
-  let printableElement = document.createElement('div')
+  var printableElement = document.createElement('div')
   printableElement.appendChild(printElement.cloneNode(true))
 
   // add cloned element to DOM, to have DOM element methods available. It will also be easier to colect styles
@@ -244,7 +244,7 @@ PrintJS.prototype.html = function () {
   printableElement.setAttribute('style', this.collectStyles(printableElement) + 'margin:0 !important;')
 
   // get all children elements
-  let elements = printableElement.children
+  var elements = printableElement.children
 
   // get styles for all children elements
   this.loopNodesCollectStyles(elements)
@@ -276,7 +276,7 @@ PrintJS.prototype.json = function () {
   }
 
   // variable to hold html string
-  let htmlData = ''
+  var htmlData = ''
 
   // check print has header
   if (this.params.header) {
@@ -294,13 +294,13 @@ PrintJS.prototype.json = function () {
 }
 
 PrintJS.prototype.print = function () {
-  let print = this
+  var print = this
 
   // append iframe element to document body
   document.getElementsByTagName('body')[0].appendChild(print.printFrame)
 
   // get iframe element
-  let printJS = document.getElementById(print.params.frameId)
+  var printJS = document.getElementById(print.params.frameId)
 
   // if printing pdf in IE
   if (browser.isIE() && print.params.type === 'pdf') {
@@ -312,7 +312,7 @@ PrintJS.prototype.print = function () {
         finishPrint()
       } else {
         // get iframe element document
-        let printDocument = (printJS.contentWindow || printJS.contentDocument)
+        var printDocument = (printJS.contentWindow || printJS.contentDocument)
         if (printDocument.document) printDocument = printDocument.document
 
         // inject printable html into iframe body
@@ -365,21 +365,21 @@ PrintJS.prototype.print = function () {
 }
 
 PrintJS.prototype.collectStyles = function (element) {
-  let win = document.defaultView || window
+  var win = document.defaultView || window
 
-  let style = []
+  var style = []
 
   // string variable to hold styling for each element
-  let elementStyle = ''
+  var elementStyle = ''
 
   if (win.getComputedStyle) { // modern browsers
     style = win.getComputedStyle(element, '')
 
     // styles including
-    let targetStyles = ['border', 'float', 'box',  'break-before', 'break-after', 'break-inside']
+    var targetStyles = ['border', 'float', 'box',  'break-before', 'break-after', 'break-inside']
 
     // exact
-    let targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height']
+    var targetStyle = ['clear', 'display', 'width', 'min-width', 'height', 'min-height', 'max-height']
 
     // optinal - include margin and padding
     if (this.params.honorMarginPadding) {
@@ -391,10 +391,10 @@ PrintJS.prototype.collectStyles = function (element) {
       targetStyle.push('color')
     } 
 
-    for (let i = 0; i < style.length; i++) {
-      let currStyle = style[i];
+    for (var i = 0; i < style.length; i++) {
+      var currStyle = style[i];
 
-      for (let s = 0; s < targetStyle.length; s++) {
+      for (var s = 0; s < targetStyle.length; s++) {
         if (currStyle.indexOf(targetStyles[s]) !== -1 || currStyle.indexOf(targetStyle[s]) === 0) {
           elementStyle += currStyle + ':' + style.getPropertyValue(currStyle) + ';'
         }
@@ -403,7 +403,7 @@ PrintJS.prototype.collectStyles = function (element) {
   } else if (element.currentStyle) { // IE
     style = element.currentStyle
 
-    for (let name in style) {
+    for (var name in style) {
       if (style.indexOf('border') !== -1 && style.indexOf('color') !== -1) {
         elementStyle += name + ':' + style[name] + ';'
       }
@@ -417,25 +417,25 @@ PrintJS.prototype.collectStyles = function (element) {
 }
 
 PrintJS.prototype.loopNodesCollectStyles = function (elements) {
-  for (let n = 0; n < elements.length; n++) {
-    let currentElement = elements[n]
+  for (var n = 0; n < elements.length; n++) {
+    var currentElement = elements[n]
 
     // Form Printing - check if is element Input
-    let tag = currentElement.tagName
+    var tag = currentElement.tagName
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
       // save style to variable
-      let textStyle = this.collectStyles(currentElement)
+      var textStyle = this.collectStyles(currentElement)
 
       // remove INPUT element and insert a text node
-      let parent = currentElement.parentNode
+      var parent = currentElement.parentNode
 
       // get text value
-      let textNode = tag === 'SELECT'
+      var textNode = tag === 'SELECT'
               ? document.createTextNode(currentElement.options[currentElement.selectedIndex].text)
               : document.createTextNode(currentElement.value)
 
       // create text element
-      let textElement = document.createElement('div')
+      var textElement = document.createElement('div')
       textElement.appendChild(textNode)
 
       // add style to text
@@ -452,7 +452,7 @@ PrintJS.prototype.loopNodesCollectStyles = function (elements) {
     }
 
     // check if more elements in tree
-    let children = currentElement.children
+    var children = currentElement.children
 
     if (children.length) {
       this.loopNodesCollectStyles(children)
@@ -462,10 +462,10 @@ PrintJS.prototype.loopNodesCollectStyles = function (elements) {
 
 PrintJS.prototype.addHeader = function (printElement) {
   // create header element
-  let headerElement = document.createElement('h1')
+  var headerElement = document.createElement('h1')
 
   // create header text node
-  let headerNode = document.createTextNode(this.params.header)
+  var headerNode = document.createTextNode(this.params.header)
 
   // build and style
   headerElement.appendChild(headerNode)
@@ -475,27 +475,27 @@ PrintJS.prototype.addHeader = function (printElement) {
 }
 
 PrintJS.prototype.jsonToHTML = function () {
-  let data = this.params.printable
-  let properties = this.params.properties
+  var data = this.params.printable
+  var properties = this.params.properties
 
-  let htmlData = '<div style="display:flex; flex-direction: column;">'
+  var htmlData = '<div style="display:flex; flex-direction: column;">'
 
   // header
   htmlData += '<div style="flex:1; display:flex;">'
 
-  for (let a = 0; a < properties.length; a++) {
+  for (var a = 0; a < properties.length; a++) {
     htmlData += '<div style="flex:1; padding:5px;">' + capitalizePrint(properties[a]) + '</div>'
   }
 
   htmlData += '</div>'
 
   // create html data
-  for (let i = 0; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
     htmlData += '<div style="flex:1; display:flex;'
     htmlData += this.params.border ? 'border:1px solid lightgray;' : ''
     htmlData += '">'
 
-    for (let n = 0; n < properties.length; n++) {
+    for (var n = 0; n < properties.length; n++) {
       htmlData += '<div style="flex:1; padding:5px;">' + data[i][properties[n]] + '</div>'
     }
 
@@ -519,7 +519,7 @@ PrintJS.prototype.validateInput = function () {
 
 PrintJS.prototype.showModal = function () {
   // build modal
-  let modalStyle = 'font-family:sans-serif; ' +
+  var modalStyle = 'font-family:sans-serif; ' +
       'display:table; ' +
       'text-align:center; ' +
       'font-weight:300; ' +
@@ -534,27 +534,27 @@ PrintJS.prototype.showModal = function () {
       'transition: opacity .3s ease;'
 
   // create wrapper
-  let printModal = document.createElement('div')
+  var printModal = document.createElement('div')
   printModal.setAttribute('style', modalStyle)
   printModal.setAttribute('id', 'printJS-Modal')
 
   // create content div
-  let contentDiv = document.createElement('div')
+  var contentDiv = document.createElement('div')
   contentDiv.setAttribute('style', 'display:table-cell; vertical-align:middle; padding-bottom:100px;')
 
   // add close button (requires print.css)
-  let closeButton = document.createElement('div')
+  var closeButton = document.createElement('div')
   closeButton.setAttribute('class', 'printClose')
   closeButton.setAttribute('id', 'printClose')
   contentDiv.appendChild(closeButton)
 
   // add spinner (requires print.css)
-  let spinner = document.createElement('span')
+  var spinner = document.createElement('span')
   spinner.setAttribute('class', 'printSpinner')
   contentDiv.appendChild(spinner)
 
   // add message
-  let messageNode = document.createTextNode(this.params.modalMessage)
+  var messageNode = document.createTextNode(this.params.modalMessage)
   contentDiv.appendChild(messageNode)
 
   // add contentDiv to printModal
@@ -564,14 +564,14 @@ PrintJS.prototype.showModal = function () {
   document.getElementsByTagName('body')[0].appendChild(printModal)
 
   // add event listener to close button
-  let print = this
+  var print = this
   document.getElementById('printClose').addEventListener('click', function () {
     print.disablePrintModal()
   })
 }
 
 PrintJS.prototype.disablePrintModal = function () {
-  let printFrame = document.getElementById('printJS-Modal')
+  var printFrame = document.getElementById('printJS-Modal')
 
   printFrame.parentNode.removeChild(printFrame)
 }
@@ -582,7 +582,7 @@ function addWrapper (htmlData) {
 
 // update default print.params with user input
 function extend (a, b) {
-  for (let key in b) {
+  for (var key in b) {
     if (b.hasOwnProperty(key)) {
       a[key] = b[key]
     }
