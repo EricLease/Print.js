@@ -138,7 +138,7 @@ var PrintJS = function () {
 }
 
 PrintJS.prototype.pdf = function () {
-  const print = this
+  var print = this
 
   // if showing feedback to user, pre load pdf files (hacky)
   // since we will be using promises, we can't use this feature in IE
